@@ -1,7 +1,7 @@
 # Kaldığım yer (2026-11-23)
 
-Teknoloji **Tauri** (ölçümler PLAN.md ve deneme/KONTROL.md'de). Commit edildi, push edilmedi: nahrok-desktop `master`
-(ilk commit, uzak repo yok) ve nahrok-client `masaustu-kopru` (develop'tan bir commit ileride).
+Teknoloji **Tauri** (ölçümler PLAN.md ve deneme/KONTROL.md'de). Push edildi: nahrok-desktop `master`
+(github.com/nahrok-voice-app/nahrok-desktop) ve nahrok-client `masaustu-kopru` (develop'tan bir commit ileride, PR yok).
 
 ## Hazır ve sınandı
 
@@ -16,6 +16,6 @@ Teknoloji **Tauri** (ölçümler PLAN.md ve deneme/KONTROL.md'de). Commit edildi
 
 1. Kullanıcı yönetici PowerShell'de `uygulama\yerel-kur.ps1` çalıştırır, sonra ELLE-SINAMA.md'yi gerçek sitede dener.
    Köprü özellikleri (rozet, kısayol, ses durumu) ancak `masaustu-kopru` dalı ekorhan.site'a çıkınca görünür.
-2. Push kullanıcıya sorulur: nahrok-desktop için önce GitHub'da repo gerekir; `masaustu-kopru` develop'a birleşince
-   site yayınına girer.
+2. `masaustu-kopru` develop'a birleşince site yayınına girer (PR kullanıcıya sorulur).
+   İstenirse: bilgisayar açılınca başlama (MSIX startupTask, kapalı gelir, tepside başlar).
 3. Store: Partner Center'dan `msix/magaza.json` doldurulur, `npm run paketle`, çoklu antivirüs taraması, gönderim.
