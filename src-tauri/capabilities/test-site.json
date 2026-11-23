@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "test-site",
+  "description": "YALNIZ duman testi: tauri.test.conf.json ile hata ayıklama derlemesinde açılır, yayın derlemesinde yoktur.",
+  "windows": ["main"],
+  "remote": { "urls": ["http://localhost:*", "http://localhost:*/*"] },
+  "permissions": ["allow-set-badge", "allow-set-voice-state", "allow-open-settings"]
+}

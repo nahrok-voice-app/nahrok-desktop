@@ -1,6 +1,4 @@
 node_modules/
 target/
-gen/
-dist/
+src-tauri/gen/
 out/
-.eb-cache/

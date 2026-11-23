@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "site",
+  "description": "PLAN.md çizgi 3: sitenin uygulamadan isteyebileceği her şey. Başka hiçbir komut siteye açık değildir.",
+  "windows": ["main"],
+  "remote": { "urls": ["https://ekorhan.site", "https://ekorhan.site/*"] },
+  "permissions": ["allow-set-badge", "allow-set-voice-state", "allow-open-settings"]
+}

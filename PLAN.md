@@ -1,8 +1,8 @@
 # Nahrok masaüstü sürümü: plan ve sınırlar
 
-Son güncelleme: 2026-11-22 (dördüncü sürüm: deneme bitti, teknoloji Tauri; site adresi ve köprü listesi yazıldı).
-Durum: **v1 derlendi, otomatik duman testi 18/18**, yerel MSIX hazır. Kalan: elle sınama (ELLE-SINAMA.md), web dalının
-yayını, Store gönderimi.
+Son güncelleme: 2026-11-23 (beşinci sürüm: ayarlar penceresi, bilgisayar açılınca başlatma, arkadaşlar için deneme paketi).
+Durum: **1.1.0 derlendi**, birim testleri 8/8, duman testi 23/23; deneme paketi `release/` klasöründe. Kalan: elle sınama
+(`docs/manual-test.md`), web dalının (`masaustu-kopru`) yayını, Store gönderimi.
 
 Amaç: arkadaşların bilgisayarlarına güvenle kurabileceği, virüs uyarısı vermeyen bir Nahrok masaüstü uygulaması. Bu dosya ne
 yapılacağını ve neyin yapılmayacağını söyler; uygulama ayrıntısı içermez.
@@ -10,8 +10,8 @@ yapılacağını ve neyin yapılmayacağını söyler; uygulama ayrıntısı iç
 ## Özet
 
 Arayüzü canlı siteden (`https://ekorhan.site`) yükleyen küçük bir Windows uygulaması. Ayrı bir repoda (`nahrok-desktop`)
-yaşar ve yalnız Microsoft Store'dan, MSIX paketi olarak dağıtılır. Teknoloji **Tauri** (deneme sonucu, aşağıda); kod
-`uygulama/`, deneme kayıtları `deneme/`.
+yaşar ve yalnız Microsoft Store'dan, MSIX paketi olarak dağıtılır. Teknoloji **Tauri** (deneme sonucu, aşağıda). Kodun
+yerleşimi `README.md`'de, deneme ölçümleri `docs/technology-trial.md`'de.
 
 ## Planı belirleyen tespitler
 
@@ -33,23 +33,28 @@ yaşar ve yalnız Microsoft Store'dan, MSIX paketi olarak dağıtılır. Teknolo
 Bu çizgilerden biri değişecekse önce bu dosya değişir, sonra kod.
 
 1. **Arayüz tek yerde yaşar.** Uygulama siteyi yükler, içine ayrı bir arayüz kopyası gömülmez. Gömülü kopya, atölye arka ucu her
-   değiştirdiğinde geride kalıp kırılır.
+   değiştirdiğinde geride kalıp kırılır. Uygulamanın yalnız kendisini ilgilendiren birkaç sayfası (ayarlar, "bağlanılamadı",
+   "güncelleme gerekli") sitenin kopyası değildir; uygulamanın içinde durur ve sitenin görsel dilini
+   (`nahrok-client/TASARIM.md`) kullanır.
 2. **Site, uygulamanın gözünde güvenilmezdir.** Web içeriği işletim sistemine ve dosyalara doğrudan erişemez (Electron'da
    `sandbox` ve `contextIsolation` açık, `nodeIntegration` kapalı; Tauri'de yalnız izin listesindeki komutlar). Yalnız tek sabit
    adres yüklenir; başka adrese gezinme ve yeni pencere engellenir, dış bağlantılar sistem tarayıcısında açılır. İzin olarak
    yalnız mikrofon, ekran yakalama ve tam ekran verilir (bir de sesli kanal sesinin çalabilmesi için otomatik oynatma; kamera,
    konum, bildirim, pano okuma ve diğerleri reddedilir). Sertifika hatası hiçbir koşulda atlanmaz.
-3. **Web'in uygulamadan isteyebilecekleri kısa bir listedir.** Bugünkü liste: `rozet(sayı)`, `sesDurumu({kanalda,
-   susturuldu, sagir})`, `kisayollar(değişiklik?)`; uygulamadan web'e yalnız `kisayolDinle` ile 'sustur' / 'sagirlastir'.
-   Liste dışı her çağrı reddedilir (`uygulama/src-tauri/build.rs` + `capabilities/site.json`, komutta ayrıca köken
-   denetimi); listeye ekleme bu dosyada yazılı kapsamı değiştirmek demektir.
+3. **Web'in uygulamadan isteyebilecekleri kısa bir listedir.** Bugünkü liste (`window.nahrokDesktop`): `setBadge(sayı)`,
+   `setVoiceState({ inVoice, muted, deafened })`, `openSettings()`; uygulamadan web'e yalnız `onShortcut` ile
+   'toggleMute' / 'toggleDeafen'. Liste dışı her çağrı reddedilir (`src-tauri/build.rs` + `capabilities/site.json`, komutta
+   ayrıca köken denetimi); ayarları okuyup değiştiren komutlar yalnız uygulamanın ayarlar penceresine açıktır. Listeye
+   ekleme bu dosyada yazılı kapsamı değiştirmek demektir.
 4. **Paylaşılacak ekranı kullanıcı seçer.** Seçim uygulamanın ya da tarayıcı çekirdeğinin kendi penceresinde yapılır. Web kodu
    kaynak seçemez, seçim olmadan yakalama başlamaz.
 5. **Web bozulmaz.** Web kodu masaüstü uygulamasını algılarsa kullanır, yoksa bugünkü gibi çalışır. TV ve telefon web'de kalır.
 6. **Atölye masaüstüne dokunmaz.** Uygulama ayrı repodadır. Sürümü insan çıkarır; Store hesabı ve yükleme yetkisi ajan
    konteynerlerinin erişemeyeceği yerde durur.
 7. **Tek dağıtım yolu Microsoft Store'dur.** Paket MSIX'tir; elden exe dağıtılmaz. Kurulum yönetici izni istemez, sürücü ya da
-   arka plan servisi kurmaz, otomatik başlatma varsayılan kapalıdır.
+   arka plan servisi kurmaz, otomatik başlatma varsayılan kapalıdır. Tek istisna Store'a çıkana kadarki deneme: 2–3 arkadaş
+   `release/` klasöründeki deneme sertifikasıyla imzalı paketi kurar (sertifika için bir kez yönetici izni ister, güncelleme
+   kendiliğinden gelmez). Store'a çıkınca bu klasör kaldırılır.
 8. **Tarayıcı çekirdeği güncel kalır.** Tauri'de çekirdek Windows'un güncellediği WebView2'dir, sabit sürüm gömülmez. Electron'da
    desteği bitmiş sürümle yayın yapılmaz (yaklaşık iki ayda bir ana sürüm çıkar, son üçü yamalanır).
 9. **Antivirüsün işaretlediği paket yüklenmez.** Her sürüm Store'a gönderilmeden önce çoklu antivirüs taramasından geçer;
@@ -76,7 +81,7 @@ Microsoft Store, MSIX paketi olarak.
 
 ### Teknoloji (kapandı: Tauri)
 
-Deneme 2026-11-21/22'de bu makinede yapıldı (`deneme/KONTROL.md`). Belirleyen ölçüm: uygulama içinde 440 Hz, ayrı bir
+Deneme 2026-11-21/22'de bu makinede yapıldı (`docs/technology-trial.md`). Belirleyen ölçüm: uygulama içinde 440 Hz, ayrı bir
 işlemde 1000 Hz çalarken "sistem sesiyle tüm ekran" yayınının sesi.
 
 | | Dış ses (1000 Hz) | Kendi ses (440 Hz), `restrictOwnAudio: true` |
@@ -84,7 +89,7 @@ işlemde 1000 Hz çalarken "sistem sesiyle tüm ekran" yayınının sesi.
 | Electron 39 (`loopback`, `loopbackWithoutChrome`, `RestrictOwnAudio` bayrağı) | -40 dB | -35 dB: **konuşmalar yayına karışıyor** |
 | Tauri / WebView2 157 (kendi seçicisi, "Sistem sesiyle paylaş") | -40 dB | **-89 dB**: ayrılıyor (taban -165 dB) |
 
-MSIX: Tauri exe'si Windows SDK `makeappx` ile 2,5 MB pakete dönüşüyor (`uygulama/paketle.ps1`); Electron'unki 135 MB.
+MSIX: Tauri exe'si Windows SDK `makeappx` ile 2,5 MB pakete dönüşüyor (`scripts/package.ps1`); Electron'unki 135 MB.
 İki koşul da tuttuğu için Tauri seçildi. Aşağıdaki tablo seçim öncesi değerlendirmedir.
 
 | Seçenek | Artı | Eksi |
@@ -93,7 +98,7 @@ MSIX: Tauri exe'si Windows SDK `makeappx` ile 2,5 MB pakete dönüşüyor (`uygu
 | Electron | Chromium gömülü: testlerdeki tarayıcının aynısı, yakalama tam kontrolde; MSIX paketi hazır araçla üretilir; duman testi mevcut test ortamında koşar | Yaklaşık 100 MB; iki ayda bir güncelleme şart; ekran seçiciyi biz yazarız |
 
 Tauri'nin seçilmesi için iki koşul birden gerekir: sistem sesiyle yayın çalışmalı ve MSIX paketi üretilip kurulabilmeli. Biri
-tutmazsa Electron seçilir. (Sonuç: ikisi de tuttu; kurulum adımı yönetici izni istediği için repo sahibi `yerel-kur.ps1` ile sınar.)
+tutmazsa Electron seçilir. (Sonuç: ikisi de tuttu; deneme paketi repo sahibinin bilgisayarında kuruldu.)
 
 ### Arayüz nereden gelir (kapandı)
 
@@ -116,11 +121,14 @@ kendiliğinden ulaşır. İşin büyüklüğü teknolojiye bağlı:
 
 - Giriş, sohbet, ses, yayın izleme
 - Yayın açma (kaynak seçimi çizgi 4'e göre)
-- Oyundayken çalışan sustur/sağırlaştır kısayolu (bas-değiştir)
-- Tepsi ikonu ve pencere kapanınca seste kalma
+- Oyundayken çalışan mikrofon / ses kısayolu (bas-değiştir)
+- Tepsi simgesi ve pencere kapanınca seste kalma; tepsi menüsünden mikrofon / ses aç-kapa
 - Okunmamış rozeti
 - Tek kopya çalışma
 - En düşük sürüm kontrolü (eski uygulama "Store'dan güncelle" ekranı görür)
+- Ayarlar penceresi (tepsi menüsü, Ctrl + , ya da sitedeki düğme): kısayollar, bilgisayar açılınca başlatma (varsayılan
+  kapalı, açılınca tepside başlar), kapatınca tepside çalışma
+- Pencerenin boyutu ve yeri hatırlanır
 
 **Yok**
 
@@ -135,21 +143,21 @@ kendiliğinden ulaşır. İşin büyüklüğü teknolojiye bağlı:
 ## Sıra
 
 0. **Store hesabı (repo sahibi, hemen).** Kimlik doğrulaması zaman alabildiği için denemeyle aynı anda başlar.
-   Hesap açılınca Ürün kimliği değerleri `uygulama/msix/magaza.json`'a yazılır.
-1. **Deneme (bitti: Tauri).** İki boş uygulamada (Tauri ve Electron) site açılıp bir Windows bilgisayarda sınanır (iskeletler `deneme/`
-   klasöründe, adımlar `deneme/KONTROL.md` içinde):
+   Hesap açılınca Ürün kimliği değerleri `msix/store.json`'a yazılır.
+1. **Deneme (bitti: Tauri).** İki boş uygulamada (Tauri ve Electron) site açılıp bir Windows bilgisayarda sınanır (sonuçlar
+   `docs/technology-trial.md` içinde):
    - Giriş, ses ve yayın çalışıyor mu?
    - Sistem sesiyle yayın açılabiliyor mu, kanaldaki konuşmalar yayına geri karışıyor mu? Web'de bunu `getDisplayMedia`
      çağrısındaki `restrictOwnAudio` çözüyor (`src/components/VoiceChannel.jsx`).
    - MSIX paketi üretilip yerelde kurulabiliyor mu?
 
    Sonuç teknolojiyi belirler. İkisinde de sistem sesi çalışmazsa v1'de yayın sesi varsayılan kapalı gelir.
-2. **Uygulama (yazıldı: `uygulama/`).** Çizgi 2–4, tepsi ve kısayol. Windows'ta otomatik duman testi
-   (`npm run derle:sinama && npm run duman`, yerel sahte siteye karşı) ve `uygulama/ELLE-SINAMA.md`.
-3. **Web tarafı (yazıldı: `nahrok-client` `masaustu-kopru` dalı, `develop`'tan).** `src/utils/desktop.js`, rozet,
-   kısayol, ses durumu, masaüstü yayın metni, `public/masaustu.json` (en düşük sürüm).
-4. **Yayın.** Gizlilik sayfası ve inceleyici test hesabı, çizgi 9'daki tarama, Store'a gönderim; 2–3 arkadaşla deneme, sonra
-   herkese.
+2. **Uygulama (yazıldı).** Çizgi 2–4, tepsi, kısayol, ayarlar. Windows'ta otomatik duman testi
+   (`npm run build:test && npm run test:smoke`, yerel sahte siteye karşı) ve `docs/manual-test.md`.
+3. **Web tarafı (yazıldı: `nahrok-client` `masaustu-kopru` dalı, `develop`'tan).** `src/utils/desktop.js`, rozet, ses
+   durumu, kısayol eylemleri, "Uygulama ayarlarını aç" düğmesi, masaüstü yayın metni, `public/desktop.json` (en düşük sürüm).
+4. **Yayın.** 2–3 arkadaşla deneme (`release/`), sonra gizlilik sayfası ve inceleyici test hesabı, çizgi 9'daki tarama,
+   Store'a gönderim ve herkese.
 
 ## Açık kararlar
 

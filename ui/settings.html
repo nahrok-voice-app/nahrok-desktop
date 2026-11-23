@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nahrok ayarları</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="settings.js" defer></script>
+</head>
+<body>
+  <main class="settings">
+    <header>
+      <img class="logo" src="logo.svg" alt="">
+      <h1>Ayarlar</h1>
+    </header>
+
+    <section class="nb-card" aria-labelledby="startup-heading">
+      <h2 class="nb-label" id="startup-heading">Başlangıç</h2>
+      <div class="row">
+        <div class="row-text">
+          <span class="row-title" id="start-at-login-title">Bilgisayar açılınca başlat</span>
+          <span class="row-hint" id="start-at-login-hint">Windows'a giriş yapınca Nahrok kendiliğinden açılır.</span>
+        </div>
+        <button type="button" class="nb-switch" role="switch" id="start-at-login" aria-checked="false"
+          aria-labelledby="start-at-login-title" aria-describedby="start-at-login-hint" disabled></button>
+      </div>
+      <div class="nb-alert" id="startup-note" role="status" hidden>
+        <p id="startup-note-text"></p>
+        <button type="button" class="nb-btn nb-btn-ghost nb-btn-small" id="open-windows-startup" hidden>Windows ayarlarını aç</button>
+      </div>
+      <hr class="divider">
+      <div class="row">
+        <div class="row-text">
+          <span class="row-title" id="start-hidden-title">Tepside başlat</span>
+          <span class="row-hint" id="start-hidden-hint">Bilgisayar açılınca pencere açılmaz; Nahrok saatin yanındaki simgede bekler.</span>
+        </div>
+        <button type="button" class="nb-switch" role="switch" id="start-hidden" aria-checked="false"
+          aria-labelledby="start-hidden-title" aria-describedby="start-hidden-hint" disabled></button>
+      </div>
+    </section>
+
+    <section class="nb-card" aria-labelledby="window-heading">
+      <h2 class="nb-label" id="window-heading">Pencere</h2>
+      <div class="row">
+        <div class="row-text">
+          <span class="row-title" id="close-to-tray-title">Kapatınca tepside çalışsın</span>
+          <span class="row-hint" id="close-to-tray-hint">Pencereyi kapatınca Nahrok kapanmaz; saatin yanındaki simgeden yeniden açılır. Bu kapalıyken de sesli kanaldaysan Nahrok tepside kalır, konuşma kesilmez.</span>
+        </div>
+        <button type="button" class="nb-switch" role="switch" id="close-to-tray" aria-checked="false"
+          aria-labelledby="close-to-tray-title" aria-describedby="close-to-tray-hint" disabled></button>
+      </div>
+    </section>
+
+    <section class="nb-card" aria-labelledby="shortcuts-heading">
+      <h2 class="nb-label" id="shortcuts-heading">Kısayollar</h2>
+      <p class="row-hint">Oyundayken ya da başka bir pencere öndeyken de çalışır.</p>
+      <div class="row">
+        <span class="row-title" id="toggle-mute-title">Mikrofonu aç / kapat</span>
+        <button type="button" class="key-box" data-action="toggleMute" aria-describedby="toggle-mute-title" disabled>…</button>
+      </div>
+      <div class="row">
+        <span class="row-title" id="toggle-deafen-title">Sesi aç / kapat</span>
+        <button type="button" class="key-box" data-action="toggleDeafen" aria-describedby="toggle-deafen-title" disabled>…</button>
+      </div>
+      <p class="row-hint">Kutuya tıkla, sonra Ctrl, Alt ya da Shift ile birlikte bir tuşa bas. Silmek için Backspace, vazgeçmek için Esc.</p>
+      <div class="nb-alert nb-alert-danger" id="shortcut-error" role="alert" hidden></div>
+    </section>
+
+    <p class="footer" id="version"></p>
+  </main>
+</body>
+</html>

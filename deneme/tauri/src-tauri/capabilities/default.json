@@ -1,7 +1,0 @@
-{
-  "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "Çizgi 2-3: web'e hiçbir komut verilmez; liste bilerek boş.",
-  "windows": ["main"],
-  "permissions": []
-}
