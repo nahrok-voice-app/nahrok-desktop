@@ -1,0 +1,63 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Ses sınaması</title>
+<pre id="cikti">bekliyor</pre>
+<script>
+// Uygulamanın kendi sesi: 440 Hz (kanaldaki konuşmaları temsil eder).
+// Başka bir uygulamanın sesi: 1000 Hz (ayrı işlemde çalınır).
+const KENDI = 440, DIS = 1000;
+
+async function olc(kisitla) {
+  const ac = new AudioContext();
+  const osc = ac.createOscillator(); osc.frequency.value = KENDI;
+  const g = ac.createGain(); g.gain.value = 0.05;
+  osc.connect(g).connect(ac.destination); osc.start();
+
+  const akis = await navigator.mediaDevices.getDisplayMedia({
+    video: true,
+    audio: { restrictOwnAudio: kisitla, echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+    systemAudio: 'include',
+  });
+  const izler = akis.getAudioTracks();
+  const sonuc = { restrictOwnAudio: kisitla, sesBaglami: ac.state, sesIzi: izler.length, ayarlar: izler[0] ? izler[0].getSettings() : null };
+  if (izler.length) {
+    const src = ac.createMediaStreamSource(new MediaStream(izler));
+    const an = ac.createAnalyser(); an.fftSize = 8192; an.smoothingTimeConstant = 0;
+    src.connect(an);
+    const veri = new Float32Array(an.frequencyBinCount);
+    const kutu = (f) => Math.round(f / (ac.sampleRate / an.fftSize));
+    const tepe = (f) => { let m = -200; for (let i = kutu(f) - 2; i <= kutu(f) + 2; i++) m = Math.max(m, veri[i]); return m; };
+    const taban = () => { let s = 0, n = 0; for (let f = 1500; f < 4000; f += 50) { s += veri[kutu(f)]; n++; } return s / n; };
+    let k = -200, d = -200, t = 0, n = 0;
+    for (let i = 0; i < 20; i++) {
+      await new Promise((r) => setTimeout(r, 100));
+      an.getFloatFrequencyData(veri);
+      k = Math.max(k, tepe(KENDI)); d = Math.max(d, tepe(DIS)); t += taban(); n++;
+    }
+    Object.assign(sonuc, { kendiSesDb: Math.round(k), disSesDb: Math.round(d), tabanDb: Math.round(t / n) });
+  }
+  akis.getTracks().forEach((t) => t.stop());
+  osc.stop(); await ac.close();
+  return sonuc;
+}
+
+window.sina = async () => {
+  const sonuclar = [];
+  for (const kisitla of [false, true]) {
+    try { sonuclar.push(await olc(kisitla)); } catch (e) { sonuclar.push({ restrictOwnAudio: kisitla, hata: String(e) }); }
+  }
+  const cikis = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audiooutput' && d.deviceId === 'default');
+  const rapor = { kullaniciAjani: navigator.userAgent, varsayilanCikis: cikis[0] ? cikis[0].label : '?', sonuclar };
+  document.getElementById('cikti').textContent = JSON.stringify(rapor, null, 2);
+  return rapor;
+};
+
+// ?oto: sayfa kendisi ölçer ve sonucu yerel sınama sunucusuna gönderir (Tauri/WebView2 sınaması için).
+if (location.search.includes('oto')) {
+  setTimeout(async () => {
+    let rapor;
+    try { rapor = await window.sina(); } catch (e) { rapor = { hata: String(e) }; }
+    fetch('/sonuc', { method: 'POST', body: JSON.stringify(rapor) });
+  }, 1500);
+}
+</script>

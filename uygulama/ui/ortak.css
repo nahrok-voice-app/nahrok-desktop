@@ -1,0 +1,16 @@
+:root { --zemin: #FFF4E4; --kart: #ffffff; --yazi: #1D1830; --soluk: #6b6480; --vurgu: #6366f1; color-scheme: light dark; }
+@media (prefers-color-scheme: dark) { :root { --zemin: #1D1830; --kart: #2a2342; --yazi: #f5efff; --soluk: #b3a9cc; } }
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--zemin); color: var(--yazi); font: 15px/1.5 "Segoe UI", system-ui, sans-serif;
+  display: flex; align-items: center; justify-content: center; padding: 16px; }
+.kart { background: var(--kart); border: 2px solid var(--yazi); border-radius: 16px; box-shadow: 4px 4px 0 var(--yazi);
+  max-width: 420px; width: 100%; padding: 28px; text-align: center; }
+.simge { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff; font: 700 32px/56px "Segoe UI", sans-serif; margin: 0 auto 16px; }
+h1 { font-size: 20px; margin: 0 0 8px; }
+p { margin: 0 0 20px; color: var(--soluk); }
+button, a.dugme { display: inline-block; font: 600 15px "Segoe UI", sans-serif; padding: 10px 18px; border-radius: 10px;
+  border: 2px solid var(--yazi); background: var(--vurgu); color: #fff; cursor: pointer; text-decoration: none; }
+button:focus-visible, a.dugme:focus-visible { outline: 3px solid var(--vurgu); outline-offset: 2px; }
+small { display: block; margin-top: 16px; color: var(--soluk); }

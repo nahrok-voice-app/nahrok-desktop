@@ -1,0 +1,40 @@
+{
+  "name": "nahrok-desktop-deneme-electron",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Nahrok masaüstü: Electron denemesi (siteyi yükleyen boş kabuk)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "paketle": "node paketle.js",
+    "paketle:yerel": "node paketle.js --yerel"
+  },
+  "devDependencies": {
+    "electron": "^39.0.0",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.nahrok.desktop.deneme",
+    "productName": "Nahrok Deneme",
+    "files": [
+      "main.js",
+      "package.json"
+    ],
+    "directories": {
+      "output": "out"
+    },
+    "win": {
+      "target": "appx"
+    },
+    "appx": {
+      "identityName": "Nahrok.Deneme",
+      "publisher": "CN=Nahrok Deneme",
+      "publisherDisplayName": "Nahrok",
+      "applicationId": "NahrokDeneme",
+      "artifactName": "nahrok-${version}.${ext}"
+    },
+    "toolsets": {
+      "winCodeSign": "1.1.0"
+    }
+  }
+}

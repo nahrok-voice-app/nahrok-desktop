@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "site",
+  "description": "PLAN.md çizgi 3: sitenin uygulamadan isteyebileceği her şey. Başka hiçbir Tauri komutu siteye açık değildir.",
+  "windows": ["ana"],
+  "remote": { "urls": ["https://ekorhan.site", "https://ekorhan.site/*"] },
+  "permissions": ["allow-rozet", "allow-ses-durumu", "allow-kisayollar"]
+}
