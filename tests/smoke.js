@@ -7,7 +7,8 @@ const path = require('path');
 const { spawn, execFileSync } = require('child_process');
 
 const EXE = process.argv[2] || path.join(__dirname, '..', 'src-tauri', 'target', 'debug', 'nahrok.exe');
-const SETTINGS_FILE = path.join(process.env.APPDATA || '', 'com.nahrok.desktop', 'settings.json');
+// Sınama derlemesinin kimliği ayrıdır (tauri.test.conf.json): kurulu Nahrok'la çakışmaz, kullanıcının ayarlarına dokunmaz
+const SETTINGS_FILE = path.join(process.env.APPDATA || '', 'com.nahrok.desktop.test', 'settings.json');
 const VERSION = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src-tauri', 'tauri.conf.json'), 'utf8')).version;
 
 // Kullanıcının kendi ayarları sınamadan sonra geri konur
